@@ -1,3 +1,9 @@
+#ifdef __APPLE__
+    #include <GLUT/glut.h>
+#else
+    #include <GL/glut.h>
+#endif
+
 class Carpet
 {
     public:
@@ -8,4 +14,5 @@ class Carpet
         void draw(double x, double y, double z, int level, double size);
         double size;
         int levels;
+        GLuint texture;
 };

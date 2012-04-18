@@ -6,10 +6,18 @@
 
 #include <stdlib.h>
 #include <cmath>
+#include <iostream>
 #include "sierpinski_carpet.h"
+#include "SOIL.h"
 
 Carpet::Carpet(double size, int levels) : size(size), levels(levels)
 {
+    texture = SOIL_load_OGL_texture("texture.bmp", SOIL_LOAD_AUTO,
+        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y |
+        SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+    
+    if (texture == 0)
+        std::cout << "SOIL loading error: " << SOIL_last_result() << endl;
 }
 
 void Carpet::draw(double x, double y, double z, int level, double size)
