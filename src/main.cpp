@@ -16,7 +16,7 @@
 
 Carpet *carpet;
 double xpos = 0, ypos = -0, zpos = 1.5;
-double zoom = 1.0;
+double zoom = 0.1;
 
 void init()
 {

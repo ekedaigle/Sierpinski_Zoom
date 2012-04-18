@@ -14,4 +14,5 @@ class Carpet
         void draw(double x, double y, double z, int level, double size);
         int levels;
         GLuint texture;
+        int seed;
 };
