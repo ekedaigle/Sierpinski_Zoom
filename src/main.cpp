@@ -4,21 +4,31 @@
     #include <GL/glut.h>
 #endif
 
+#include <stdlib.h>
+#include <time.h>
+#include "sierpinski_carpet.h"
+
+#define UPDATE_TIME_INTERVAL 50 // timer interval in miliseconds
+
+Carpet *carpet;
+
 void init()
 {
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0, 0.0, 0.0, 0.0);
+
+    carpet = new Carpet(0.5, 5);
 }
 
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    gluLookAt(0.0f, 0.0f, 1.0f,
+    gluLookAt(0.0f, 0.0f, 1.5f,
         0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f);
 
-    glutWireTeapot(0.5);
+    carpet->draw();
     glutSwapBuffers();
 }
 
@@ -36,17 +46,23 @@ void reshape(int width, int height)
     glMatrixMode(GL_MODELVIEW);
 }
 
+void update(int val)
+{
+    glutTimerFunc(UPDATE_TIME_INTERVAL, update, 0);
+}
+
 int main(int argc, char *argv[])
 {
+    srand(time(0));
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     glutInitWindowSize(500, 500);
     glutCreateWindow("Sierpinski Zoom");
     glutDisplayFunc(display);
-    glutIdleFunc(display);
     glutReshapeFunc(reshape);
 
     init();
+    glutTimerFunc(UPDATE_TIME_INTERVAL, update, 0);
     glutMainLoop();
     return 0;
 }
