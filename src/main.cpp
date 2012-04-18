@@ -9,8 +9,12 @@
 #include "sierpinski_carpet.h"
 
 #define UPDATE_TIME_INTERVAL 50 // timer interval in miliseconds
+#define ZOOM_POINT_X 0.25
+#define ZOOM_POINT_Y -0.25
+#define ZOOM_POINT_Z 0.26
 
 Carpet *carpet;
+double xpos = 0, ypos = -0, zpos = 1.5;
 
 void init()
 {
@@ -24,8 +28,8 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    gluLookAt(0.0f, 0.0f, 1.5f,
-        0.0f, 0.0f, 0.0f,
+    gluLookAt(xpos, ypos, zpos,
+        xpos, ypos, zpos - 1,
         0.0f, 1.0f, 0.0f);
 
     carpet->draw();
@@ -42,12 +46,17 @@ void reshape(int width, int height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, width, height);
-    gluPerspective(45, ratio, 1, 1000);
+    gluPerspective(45, ratio, 0.01, 1000);
     glMatrixMode(GL_MODELVIEW);
 }
 
 void update(int val)
 {
+    xpos -= (xpos - ZOOM_POINT_X) / 100;
+    ypos -= (ypos - ZOOM_POINT_Y) / 100;
+    zpos -= (zpos - ZOOM_POINT_Z) / 100;
+
+    glutPostRedisplay();
     glutTimerFunc(UPDATE_TIME_INTERVAL, update, 0);
 }
 

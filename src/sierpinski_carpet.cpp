@@ -17,7 +17,7 @@ Carpet::Carpet(double size, int levels) : size(size), levels(levels)
         SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
     
     if (texture == 0)
-        std::cout << "SOIL loading error: " << SOIL_last_result() << endl;
+        std::cout << "SOIL loading error: " << SOIL_last_result() << std::endl;
 }
 
 void Carpet::draw(double x, double y, double z, int level, double size)
