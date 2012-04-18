@@ -10,6 +10,9 @@
 #include "sierpinski_carpet.h"
 #include "SOIL.h"
 
+using namespace std;
+
+
 Carpet::Carpet(double size, int levels) : size(size), levels(levels)
 {
     texture = SOIL_load_OGL_texture("texture.bmp", SOIL_LOAD_AUTO,
@@ -26,7 +29,8 @@ void Carpet::draw(double x, double y, double z, int level, double size)
     {
         glPushMatrix();
         glTranslatef(x, y, z);
-        glColor3f((double)rand() / RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
+//        glColor3f((double)rand() / RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
+        glColor3f(x/this->size, y/this->size, z/this->size);
         glutSolidCube(size);
         glPopMatrix();
         return;
@@ -54,5 +58,5 @@ void Carpet::draw(double x, double y, double z, int level, double size)
 
 void Carpet::draw()
 {
-    draw(0.0, 0.0, 0.0, 3, size);
+    draw(0.0, 0.0, 0.0, levels, size);
 }
