@@ -9,7 +9,7 @@
 #include <time.h>
 #include "sierpinski_carpet.h"
 
-#define UPDATE_TIME_INTERVAL 50 // timer interval in miliseconds
+#define UPDATE_TIME_INTERVAL 30 // timer interval in miliseconds
 
 Carpet *carpet;
 int mouseX = 0;
@@ -22,24 +22,24 @@ void init()
 {
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.0, 0.0, 0.0, 0.0);
+    
 
-    carpet = new Carpet(1, 4);
+    carpet = new Carpet(1.0f, 4);
+
 }
 
 
 void display()
 {
-    printf("mouseX:%i\tmouseY%i\n", mouseX, mouseY);
+//    printf("mouseX:%i\tmouseY%i\n", mouseX, mouseY);
     
-    float xwobble = ((float)mouseX)/windowWidth;
-    float ywobble = ((float)mouseY)/windowHeight;
+//    float xwobble = ((float)mouseX)/windowWidth;
+//    float ywobble = ((float)mouseY)/windowHeight;
     
+    // Rotate in place
+    glRotatef(1.0f, 0, 1, 1);
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glLoadIdentity();
-    gluLookAt(xwobble, ywobble, 1.5f,
-        0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f);
 
     carpet->draw();
     glutSwapBuffers();
@@ -60,10 +60,16 @@ void reshape(int width, int height)
     
     windowWidth = glutGet(GLUT_WINDOW_WIDTH);
     windowHeight = glutGet(GLUT_WINDOW_HEIGHT);
+    glLoadIdentity();
+    gluLookAt(0.0f, 0.0f, 2.0f,
+              0.0f, 0.0f, 0.0f,
+              0.0f, 1.0f, 0.0f);
+
 }
 
 void update(int val)
 {
+    glutPostRedisplay();
     glutTimerFunc(UPDATE_TIME_INTERVAL, update, 0);
 }
 
@@ -71,7 +77,6 @@ void update(int val)
 void mousePosition(int x, int y) {
     mouseX = x;
     mouseY = y;
-    glutPostRedisplay();
 }
 
 int main(int argc, char *argv[])

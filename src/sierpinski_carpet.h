@@ -11,9 +11,18 @@ class Carpet
         void draw();
 
     private:
-        void draw(double x, double y, double z, int level, double size);
-    void initBuffers();
+        struct SVertex
+        {
+            GLfloat x,y,z;
+            GLfloat r,g,b;
+        };
+
+        int generate(double x, double y, double z, int level, double size, SVertex * vertices, int next);
+        int cube(double x, double y, double z, double size, SVertex * vertices, int next);
+        void initBuffer();
         double size;
         int levels;
+        int vertex_count;
+        GLuint vbuffer;
         GLuint texture;
 };
