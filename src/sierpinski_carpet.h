@@ -12,6 +12,7 @@ class Carpet
 
     private:
         void draw(double x, double y, double z, int level, double size);
+    void initBuffers();
         double size;
         int levels;
         GLuint texture;

@@ -14,6 +14,9 @@
 Carpet *carpet;
 int mouseX = 0;
 int mouseY = 0;
+float windowWidth = 1.0f;
+float windowHeight = 1.0f;
+
 
 void init()
 {
@@ -28,8 +31,8 @@ void display()
 {
     printf("mouseX:%i\tmouseY%i\n", mouseX, mouseY);
     
-    float xwobble = ((float)mouseX)/((float)glutGet(GLUT_WINDOW_WIDTH));
-    float ywobble = ((float)mouseY)/((float)glutGet(GLUT_WINDOW_HEIGHT));
+    float xwobble = ((float)mouseX)/windowWidth;
+    float ywobble = ((float)mouseY)/windowHeight;
     
     
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -54,6 +57,9 @@ void reshape(int width, int height)
     glViewport(0, 0, width, height);
     gluPerspective(45, ratio, 1, 1000);
     glMatrixMode(GL_MODELVIEW);
+    
+    windowWidth = glutGet(GLUT_WINDOW_WIDTH);
+    windowHeight = glutGet(GLUT_WINDOW_HEIGHT);
 }
 
 void update(int val)

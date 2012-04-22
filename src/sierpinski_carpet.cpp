@@ -21,39 +21,31 @@ Carpet::Carpet(double size, int levels) : size(size), levels(levels)
     
     if (texture == 0)
         std::cout << "SOIL loading error: " << SOIL_last_result() << endl;
+    
+    initBuffers();
+}
+
+void Carpet::initBuffers() {
+    GLuint vbuffer;
+    
+    static const GLfloat data[] = {0.0f,0.0f,0.0f, 1.0f,0.0f,0.0f, 0.0f,1.0f,0.0f};
+    
+    glGenBuffers(1, &vbuffer);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, vbuffer);
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+    
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    glVertexPointer(3, GL_FLOAT, 0, 0);
+    
 }
 
 void Carpet::draw(double x, double y, double z, int level, double size)
 {
-    if (level == 0)
-    {
-        glPushMatrix();
-        glTranslatef(x, y, z);
-//        glColor3f((double)rand() / RAND_MAX, (double)rand() / RAND_MAX, (double)rand() / RAND_MAX);
-        glColor3f(x/this->size, y/this->size, z/this->size);
-        glutSolidCube(size);
-        glPopMatrix();
-        return;
-    }
-
-    double next_size = size / 3.0;
-
-    for (int i = -1; i <= 1; i++)
-    {
-        for (int j = -1; j <= 1; j++)
-        {
-            if (i == 0 && j == 0)
-                continue;
-
-            for (int k = -1; k <= 1; k++)
-            {
-                if ((i == 0 && k == 0) || (j == 0 && k == 0))
-                    continue;
-
-                draw(x + i * next_size, y + j * next_size, z + k * next_size, level - 1, next_size);
-            }
-        }
-    }
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glDrawArrays(GL_TRIANGLES,0,3); 
 }
 
 void Carpet::draw()
