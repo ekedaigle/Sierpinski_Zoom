@@ -7,16 +7,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <cmath>
 #include "sierpinski_carpet.h"
 
-#define UPDATE_TIME_INTERVAL 30 // timer interval in miliseconds
+
+#define UPDATE_TIME_INTERVAL 50 // timer interval in miliseconds
+#define ZOOM_POINT_X 0.25
+#define ZOOM_POINT_Y -0.25
+#define ZOOM_POINT_Z 0.26
 
 Carpet *carpet;
-int mouseX = 0;
-int mouseY = 0;
-float windowWidth = 1.0f;
-float windowHeight = 1.0f;
-
+double xpos = 0, ypos = -0, zpos = 1.5;
+double zoom = 0.1;
 
 void init()
 {
@@ -42,25 +44,21 @@ void init()
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
     glEnable(GL_LIGHT0);
-
-    carpet = new Carpet(1.0f, 4);
-
+    
+    carpet = new Carpet(4);
 }
 
 
 void display()
 {
-//    printf("mouseX:%i\tmouseY%i\n", mouseX, mouseY);
-    
-//    float xwobble = ((float)mouseX)/windowWidth;
-//    float ywobble = ((float)mouseY)/windowHeight;
-    
-    // Rotate in place
-    glRotatef(1.0f, 0, 1, 1);
-    
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    carpet->draw();
+    glLoadIdentity();
+    gluLookAt(xpos, ypos, zpos,
+        xpos, ypos, zpos - 1,
+        0.0f, 1.0f, 0.0f);
+
+    glTranslatef(-zoom / 2.0 + 0.3, -zoom / 2.0 + 0.3, -zoom / 2.0);
+    carpet->draw(zoom);
     glutSwapBuffers();
 }
 
@@ -74,11 +72,9 @@ void reshape(int width, int height)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, width, height);
-    gluPerspective(45, ratio, 1, 1000);
+    gluPerspective(45, ratio, 0.01, 1000);
     glMatrixMode(GL_MODELVIEW);
     
-    windowWidth = glutGet(GLUT_WINDOW_WIDTH);
-    windowHeight = glutGet(GLUT_WINDOW_HEIGHT);
     glLoadIdentity();
     gluLookAt(0.0f, 0.0f, 2.0f,
               0.0f, 0.0f, 0.0f,
@@ -88,15 +84,14 @@ void reshape(int width, int height)
 
 void update(int val)
 {
+    zoom *= 1.01;
+
+    if (zoom > 3)
+        zoom /= 3;
     glutPostRedisplay();
     glutTimerFunc(UPDATE_TIME_INTERVAL, update, 0);
 }
 
-// mouse movement handler
-void mousePosition(int x, int y) {
-    mouseX = x;
-    mouseY = y;
-}
 
 int main(int argc, char *argv[])
 {
@@ -107,11 +102,6 @@ int main(int argc, char *argv[])
     glutCreateWindow("Sierpinski Zoom");
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
-
-    // capture mouse movement when mouse button down or up
-    glutMotionFunc(mousePosition);
-    glutPassiveMotionFunc(mousePosition);
-
 
     init();
     glutTimerFunc(UPDATE_TIME_INTERVAL, update, 0);

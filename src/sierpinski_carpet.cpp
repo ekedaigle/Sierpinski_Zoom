@@ -14,8 +14,7 @@
 using namespace std;
 
 
-
-Carpet::Carpet(double size, int levels) : size(size), levels(levels)
+Carpet::Carpet(int levels) : levels(levels)
 {
     initBuffer();
 }
@@ -30,7 +29,7 @@ void Carpet::initBuffer() {
     vertices = (SVertex *) calloc(vertices_needed, sizeof(SVertex));
     
     // Generate all the sub-cube vertices
-    vertex_count = generate(0.0, 0.0, 0.0, levels, size, vertices, 0);
+    vertex_count = generate(0.0, 0.0, 0.0, levels, 1.0f, vertices, 0);
 //    vertex_count = cube(0.0f, 0.0f, 0.0f, 1.0f, vertices, 0);
 
     printf("vertices:%i\n", vertex_count);
@@ -53,14 +52,12 @@ void Carpet::initBuffer() {
     glNormalPointer(GL_FLOAT, sizeof(SVertex), (GLvoid *) offsetof(SVertex, nx));
     
     free(vertices);
-    
 }
 
 int Carpet::generate(double x, double y, double z, int level, double size, SVertex * vertices, int next)
 {
     if (level == 0)
     {
-        
         return cube(x,y,z,size,vertices,next);
     }
     
@@ -166,18 +163,15 @@ int Carpet::cube(double x, double y, double z, double size, SVertex * vertices, 
         vertex->nz = cubeNormals[v+2];
     }
     
-    
-    
-//    memcpy(&(vertices[next]), realVertices, sizeof(realVertices));
-    
     return next + CUBE_VERTICES;
 }
 
 
-void Carpet::draw()
+void Carpet::draw(double size)
 {
+    glPushMatrix();
+    glScaled(size,size,size);
     glColor3f(1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_QUADS,0,vertex_count);
-    glDrawArrays(GL_QUADS,0,vertex_count);
-
+    glPopMatrix();
 }

@@ -7,8 +7,8 @@
 class Carpet
 {
     public:
-        Carpet(double size, int levels);
-        void draw();
+        Carpet(int levels);
+        void draw(double size);
 
     private:
         struct SVertex
@@ -20,7 +20,6 @@ class Carpet
         int generate(double x, double y, double z, int level, double size, SVertex * vertices, int next);
         int cube(double x, double y, double z, double size, SVertex * vertices, int next);
         void initBuffer();
-        double size;
         int levels;
         int vertex_count;
         GLuint vbuffer;
