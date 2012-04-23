@@ -170,7 +170,7 @@ int Carpet::cube(double x, double y, double z, double size, SVertex * vertices, 
 void Carpet::draw(double size)
 {
     glPushMatrix();
-    glScaled(size,size,size);
+    glScalef(size,size,size);
     glColor3f(1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_QUADS,0,vertex_count);
     glPopMatrix();

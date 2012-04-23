@@ -23,14 +23,16 @@ double zoom = 0.1;
 void init()
 {
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_NORMALIZE);
     glEnable(GL_LIGHTING);
+    
     glEnable(GL_COLOR_MATERIAL);
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     
     GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat mat_shininess[] = { 50.0 };
-    glShadeModel(GL_SMOOTH);
+    glShadeModel(GL_FLAT);
     glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
@@ -52,9 +54,11 @@ void init()
 void display()
 {
 
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glLoadIdentity();
     gluLookAt(xpos, ypos, zpos,
-        xpos, ypos, zpos - 1,
+        xpos, ypos, zpos - 1.0f,
         0.0f, 1.0f, 0.0f);
 
     glTranslatef(-zoom / 2.0 + 0.3, -zoom / 2.0 + 0.3, -zoom / 2.0);
