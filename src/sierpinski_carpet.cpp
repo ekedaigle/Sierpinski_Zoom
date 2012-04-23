@@ -10,7 +10,6 @@
 #include <cmath>
 #include <iostream>
 #include "sierpinski_carpet.h"
-#include "SOIL.h"
 
 using namespace std;
 
@@ -18,13 +17,6 @@ using namespace std;
 
 Carpet::Carpet(double size, int levels) : size(size), levels(levels)
 {
-    texture = SOIL_load_OGL_texture("texture.bmp", SOIL_LOAD_AUTO,
-        SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y |
-        SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
-    
-    if (texture == 0)
-        std::cout << "SOIL loading error: " << SOIL_last_result() << endl;
-    
     initBuffer();
 }
 
@@ -52,9 +44,13 @@ void Carpet::initBuffer() {
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, sizeof(SVertex), 0);
     
-    // Use colors from buffer 
-    glEnableClientState(GL_COLOR_ARRAY);
-    glColorPointer(3, GL_FLOAT, sizeof(SVertex), (GLvoid *) offsetof(SVertex, r));
+//    // Use colors from buffer 
+//    glEnableClientState(GL_COLOR_ARRAY);
+//    glColorPointer(3, GL_FLOAT, sizeof(SVertex), (GLvoid *) offsetof(SVertex, r));
+    
+    // Use normals from buffer 
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glNormalPointer(GL_FLOAT, sizeof(SVertex), (GLvoid *) offsetof(SVertex, nx));
     
     free(vertices);
     
@@ -102,6 +98,13 @@ int Carpet::cube(double x, double y, double z, double size, SVertex * vertices, 
     //  |/      |/
     //  v1------v3
     
+    //   y
+    //   | 
+    //   o-x
+    //  /
+    // z 
+
+    
     /*
      v0:
      -1.0, +1.0, +1.0,
@@ -129,7 +132,7 @@ int Carpet::cube(double x, double y, double z, double size, SVertex * vertices, 
      */
     
     // vertex coords array
-    static const GLfloat cubeVertices[72] =
+    static const GLfloat cubeVertices[CUBE_VERTICES*3] =
     {
         -1.0, +1.0, +1.0,  -1.0, -1.0, +1.0,  +1.0, -1.0, +1.0,  +1.0, +1.0, +1.0,   // v0-v1-v3-v2
         +1.0, +1.0, +1.0,  +1.0, -1.0, +1.0,  +1.0, -1.0, -1.0,  +1.0, +1.0, -1.0,   // v2-v3-v5-v4
@@ -139,6 +142,17 @@ int Carpet::cube(double x, double y, double z, double size, SVertex * vertices, 
         -1.0, +1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, -1.0, +1.0,  -1.0, +1.0, +1.0    // v3-v1-v7-v5
     };
     
+    // vertex coords array
+    static const GLfloat cubeNormals[6*3] =
+    {
+         0.0,  0.0, +1.0, // v0-v1-v3-v2
+        +1.0,  0.0,  0.0, // v2-v3-v5-v4
+         0.0,  0.0, -1.0, // v4-v5-v7-v6
+        +1.0,  0.0,  0.0, // v6-v7-v1-v0
+         0.0, +1.0,  0.0, // v0-v2-v4-v6
+         0.0, -1.0,  0.0  // v3-v1-v7-v5
+    };
+    
     double half = size/2;
     
     for (int i = 0; i < CUBE_VERTICES; i++) {
@@ -146,9 +160,10 @@ int Carpet::cube(double x, double y, double z, double size, SVertex * vertices, 
         vertex->x = cubeVertices[i*3+0] * half + x;
         vertex->y = cubeVertices[i*3+1] * half + y;
         vertex->z = cubeVertices[i*3+2] * half + z;
-        vertex->r = x/this->size;
-        vertex->g = y/this->size;
-        vertex->b = z/this->size;
+        int v = i/4; 
+        vertex->nx = cubeNormals[v+0];
+        vertex->ny = cubeNormals[v+1];
+        vertex->nz = cubeNormals[v+2];
     }
     
     
@@ -163,4 +178,6 @@ void Carpet::draw()
 {
     glColor3f(1.0f, 1.0f, 1.0f);
     glDrawArrays(GL_QUADS,0,vertex_count);
+    glDrawArrays(GL_QUADS,0,vertex_count);
+
 }

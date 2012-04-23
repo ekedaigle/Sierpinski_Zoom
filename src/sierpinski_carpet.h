@@ -14,7 +14,7 @@ class Carpet
         struct SVertex
         {
             GLfloat x,y,z;
-            GLfloat r,g,b;
+            GLfloat nx,ny,nz;
         };
 
         int generate(double x, double y, double z, int level, double size, SVertex * vertices, int next);

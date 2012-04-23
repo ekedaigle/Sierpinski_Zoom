@@ -21,8 +21,27 @@ float windowHeight = 1.0f;
 void init()
 {
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_COLOR_MATERIAL);
     glClearColor(0.0, 0.0, 0.0, 0.0);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     
+    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat mat_shininess[] = { 50.0 };
+    glShadeModel(GL_SMOOTH);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+
+    GLfloat light_ambient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 10.0 };
+    GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light_position[] = { -1.0, -1.0, 2.0, 0.0 };
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+    glEnable(GL_LIGHT0);
 
     carpet = new Carpet(1.0f, 4);
 
