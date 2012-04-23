@@ -33,7 +33,8 @@ void Carpet::draw(double x, double y, double z, int level, double size)
     {
         glPushMatrix();
         glTranslatef(x, y, z);
-        glColor3f(x + rand_double() / 2.0, y + rand_double() / 2.0, z + rand_double() / 2.0);
+        double x_norm = x / size, y_norm = y / size, z_norm = z / size;
+        glColor3f(rand_double() / 2.0, rand_double() / 2.0, rand_double() / 2.0);
         glutSolidCube(size);
         glPopMatrix();
         return;
