@@ -39,7 +39,7 @@ void init()
     GLfloat light_ambient[] = { 0.1, 0.1, 0.1, 1.0 };
     GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 10.0 };
     GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat light_position[] = { -1.0, -1.0, 2.0, 0.0 };
+    GLfloat light_position[] = { -1.0, -1.0, 0.0, 0.0 };
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
