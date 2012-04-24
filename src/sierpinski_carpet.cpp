@@ -4,7 +4,11 @@
     #include <GL/glut.h>
 #endif
 
-#define CUBE_VERTICES 12
+
+// only need vertices for camera-facing sides
+#define CUBE_VERTICES 12 
+#define OVERDETAIL 3
+
 
 #include <stdlib.h>
 #include <cmath>
@@ -24,13 +28,15 @@ void Carpet::initBuffer() {
     SVertex * vertices;
     int vertices_needed;
     
-    // Allocate vertex generation array (recursion complexity ^ recursion depth) * base * corner detail
-    vertices_needed = pow((double)17, levels)*CUBE_VERTICES*4; 
+    
+    
+    // Allocate vertex generation array (recursion complexity ^ recursion depth) * base * overdetail
+    // (slightly over-allocates, but not worth worrying about)
+    vertices_needed = pow((double)16, levels)*CUBE_VERTICES*(OVERDETAIL + 1); 
     vertices = (SVertex *) calloc(vertices_needed, sizeof(SVertex));
     
     // Generate all the sub-cube vertices
-    vertex_count = generate(0.0, 0.0, 0.0, levels, 3, 1.0f, vertices, 0);
-//    vertex_count = cube(0.0f, 0.0f, 0.0f, 1.0f, vertices, 0);
+    vertex_count = generate(0.0, 0.0, 0.0, levels, OVERDETAIL, 1.0f, vertices, 0);
 
     printf("vertices:%i\n", vertex_count);
     
@@ -42,11 +48,7 @@ void Carpet::initBuffer() {
     // Use positions from buffer 
     glEnableClientState(GL_VERTEX_ARRAY);
     glVertexPointer(3, GL_FLOAT, sizeof(SVertex), 0);
-    
-//    // Use colors from buffer 
-//    glEnableClientState(GL_COLOR_ARRAY);
-//    glColorPointer(3, GL_FLOAT, sizeof(SVertex), (GLvoid *) offsetof(SVertex, r));
-    
+
     // Use normals from buffer 
     glEnableClientState(GL_NORMAL_ARRAY);
     glNormalPointer(GL_FLOAT, sizeof(SVertex), (GLvoid *) offsetof(SVertex, nx));
@@ -143,15 +145,14 @@ int Carpet::cube(double x, double y, double z, double size, SVertex * vertices, 
      -1.0, -1.0, -1.0,
      */
     
+    // Optimize by only drawing the sides that face the camera
+    
     // vertex coords array
     static const GLfloat cubeVertices[CUBE_VERTICES*3] =
     {
         -1.0, +1.0, +1.0,  -1.0, -1.0, +1.0,  +1.0, -1.0, +1.0,  +1.0, +1.0, +1.0,   // v0-v1-v3-v2
         +1.0, +1.0, +1.0,  +1.0, -1.0, +1.0,  +1.0, -1.0, -1.0,  +1.0, +1.0, -1.0,   // v2-v3-v5-v4
-//        +1.0, +1.0, -1.0,  +1.0, -1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, +1.0, -1.0,   // v4-v5-v7-v6
-//        -1.0, +1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, -1.0, +1.0,  -1.0, +1.0, +1.0,   // v6-v7-v1-v0
         -1.0, +1.0, +1.0,  +1.0, +1.0, +1.0,  +1.0, +1.0, -1.0,  -1.0, +1.0, -1.0   // v0-v2-v4-v6
-//        -1.0, +1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, -1.0, +1.0,  -1.0, +1.0, +1.0    // v3-v1-v7-v5
     };
     
     // vertex coords array
@@ -159,10 +160,7 @@ int Carpet::cube(double x, double y, double z, double size, SVertex * vertices, 
     {
          0.0,  0.0, +1.0, // v0-v1-v3-v2
         +1.0,  0.0,  0.0, // v2-v3-v5-v4
-//         0.0,  0.0, -1.0 // v4-v5-v7-v6
-//        +1.0,  0.0,  0.0, // v6-v7-v1-v0
          0.0, +1.0,  0.0 // v0-v2-v4-v6
-//         0.0, -1.0,  0.0  // v3-v1-v7-v5
     };
     
     double half = size/2;
