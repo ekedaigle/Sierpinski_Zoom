@@ -4,7 +4,7 @@
     #include <GL/glut.h>
 #endif
 
-#define CUBE_VERTICES 24
+#define CUBE_VERTICES 12
 
 #include <stdlib.h>
 #include <cmath>
@@ -24,12 +24,12 @@ void Carpet::initBuffer() {
     SVertex * vertices;
     int vertices_needed;
     
-    // Allocate vertex generation array (recursion complexity ^ recursion depth) * base
-    vertices_needed = pow((double)20, levels)*CUBE_VERTICES; 
+    // Allocate vertex generation array (recursion complexity ^ recursion depth) * base * corner detail
+    vertices_needed = pow((double)17, levels)*CUBE_VERTICES*4; 
     vertices = (SVertex *) calloc(vertices_needed, sizeof(SVertex));
     
     // Generate all the sub-cube vertices
-    vertex_count = generate(0.0, 0.0, 0.0, levels, 1.0f, vertices, 0);
+    vertex_count = generate(0.0, 0.0, 0.0, levels, 3, 1.0f, vertices, 0);
 //    vertex_count = cube(0.0f, 0.0f, 0.0f, 1.0f, vertices, 0);
 
     printf("vertices:%i\n", vertex_count);
@@ -54,7 +54,7 @@ void Carpet::initBuffer() {
     free(vertices);
 }
 
-int Carpet::generate(double x, double y, double z, int level, double size, SVertex * vertices, int next)
+int Carpet::generate(double x, double y, double z, int level, int corner, double size, SVertex * vertices, int next)
 {
     if (level == 0)
     {
@@ -67,15 +67,30 @@ int Carpet::generate(double x, double y, double z, int level, double size, SVert
     {
         for (int j = -1; j <= 1; j++)
         {
+            // skip center
             if (i == 0 && j == 0)
                 continue;
             
             for (int k = -1; k <= 1; k++)
             {
-                if ((i == 0 && k == 0) || (j == 0 && k == 0))
-                    continue;
+                // skip center
+                if ((i == 0 && k == 0) || (j == 0 && k == 0)) continue;
                 
-                next = generate(x + i * next_size, y + j * next_size, z + k * next_size, level - 1, next_size, vertices, next);
+                // back corner isn't visible 
+                if (i < 1 && k < 1 && j < 1) continue;
+                
+                // extra detail on the corner 
+                int next_corner;
+                int next_level;
+                if (i == 1 && k == 1 && j == 1 && corner > 0) {
+                    next_corner = corner - 1;
+                    next_level = level;
+                } else {
+                    next_corner = 0;
+                    next_level = level - 1;
+                }
+                
+                next = generate(x + i * next_size, y + j * next_size, z + k * next_size, next_level, next_corner, next_size, vertices, next);
             }
         }
     }
@@ -133,21 +148,21 @@ int Carpet::cube(double x, double y, double z, double size, SVertex * vertices, 
     {
         -1.0, +1.0, +1.0,  -1.0, -1.0, +1.0,  +1.0, -1.0, +1.0,  +1.0, +1.0, +1.0,   // v0-v1-v3-v2
         +1.0, +1.0, +1.0,  +1.0, -1.0, +1.0,  +1.0, -1.0, -1.0,  +1.0, +1.0, -1.0,   // v2-v3-v5-v4
-        +1.0, +1.0, -1.0,  +1.0, -1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, +1.0, -1.0,   // v4-v5-v7-v6
-        -1.0, +1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, -1.0, +1.0,  -1.0, +1.0, +1.0,   // v6-v7-v1-v0
-        -1.0, +1.0, +1.0,  +1.0, +1.0, +1.0,  +1.0, +1.0, -1.0,  -1.0, +1.0, -1.0,   // v0-v2-v4-v6
-        -1.0, +1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, -1.0, +1.0,  -1.0, +1.0, +1.0    // v3-v1-v7-v5
+//        +1.0, +1.0, -1.0,  +1.0, -1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, +1.0, -1.0,   // v4-v5-v7-v6
+//        -1.0, +1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, -1.0, +1.0,  -1.0, +1.0, +1.0,   // v6-v7-v1-v0
+        -1.0, +1.0, +1.0,  +1.0, +1.0, +1.0,  +1.0, +1.0, -1.0,  -1.0, +1.0, -1.0   // v0-v2-v4-v6
+//        -1.0, +1.0, -1.0,  -1.0, -1.0, -1.0,  -1.0, -1.0, +1.0,  -1.0, +1.0, +1.0    // v3-v1-v7-v5
     };
     
     // vertex coords array
-    static const GLfloat cubeNormals[6*3] =
+    static const GLfloat cubeNormals[3*3] =
     {
          0.0,  0.0, +1.0, // v0-v1-v3-v2
         +1.0,  0.0,  0.0, // v2-v3-v5-v4
-         0.0,  0.0, -1.0, // v4-v5-v7-v6
-        +1.0,  0.0,  0.0, // v6-v7-v1-v0
-         0.0, +1.0,  0.0, // v0-v2-v4-v6
-         0.0, -1.0,  0.0  // v3-v1-v7-v5
+//         0.0,  0.0, -1.0 // v4-v5-v7-v6
+//        +1.0,  0.0,  0.0, // v6-v7-v1-v0
+         0.0, +1.0,  0.0 // v0-v2-v4-v6
+//         0.0, -1.0,  0.0  // v3-v1-v7-v5
     };
     
     double half = size/2;

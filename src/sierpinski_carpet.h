@@ -17,7 +17,7 @@ class Carpet
             GLfloat nx,ny,nz;
         };
 
-        int generate(double x, double y, double z, int level, double size, SVertex * vertices, int next);
+        int generate(double x, double y, double z, int level, int corner, double size, SVertex * vertices, int next);
         int cube(double x, double y, double z, double size, SVertex * vertices, int next);
         void initBuffer();
         int levels;
