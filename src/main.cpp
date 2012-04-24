@@ -17,7 +17,7 @@
 #define ZOOM_POINT_Z 0.26
 
 Carpet *carpet;
-double xpos = 0, ypos = -0.5, zpos = 1.5;
+double xpos = 0.0, ypos = 0.0, zpos = 0.3;
 double zoom = 0.1;
 
 void init()
@@ -56,11 +56,14 @@ void display()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glLoadIdentity();
+    double carpet_pos[3] = {-zoom / 2.0, -zoom / 2.0, -zoom / 2.0};
     gluLookAt(xpos, ypos, zpos,
-        xpos, 0, zpos - 1.0f,
+        xpos, ypos, zpos - 1.0,
         0.0f, 1.0f, 0.0f);
 
-    glTranslatef(-zoom / 2.0 + 0.3, -zoom / 2.0 + 0.3, -zoom / 2.0);
+    glRotatef(-30.0, 0.0, 1.0, 0.0);
+    glRotatef(45.0, 1.0, 0.0, 0.0);
+    glTranslatef(carpet_pos[0], carpet_pos[1], carpet_pos[2]);
     carpet->draw(zoom);
     glutSwapBuffers();
 }
