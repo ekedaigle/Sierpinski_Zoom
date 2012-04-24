@@ -17,7 +17,7 @@
 #define ZOOM_POINT_Z 0.26
 
 Carpet *carpet;
-double xpos = 0, ypos = -0, zpos = 1.5;
+double xpos = 0, ypos = -0.5, zpos = 1.5;
 double zoom = 0.1;
 
 void init()
@@ -57,7 +57,7 @@ void display()
 
     glLoadIdentity();
     gluLookAt(xpos, ypos, zpos,
-        xpos, ypos, zpos - 1.0f,
+        xpos, 0, zpos - 1.0f,
         0.0f, 1.0f, 0.0f);
 
     glTranslatef(-zoom / 2.0 + 0.3, -zoom / 2.0 + 0.3, -zoom / 2.0);
